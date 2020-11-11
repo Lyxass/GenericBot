@@ -1,7 +1,6 @@
 var Discord = require('discord.js');
 var bot = new Discord.Client();
-const token = "";
-let lastHelloCommandDate;
+const token = "NzQ0ODkxMzMzOTE0NjU2Nzcw.Xzp0HQ.8Ll3G3DLZOAkxxFBuRPRGklhcDQ";
 var isReady = true;
 lastUserMessage = {};
 
@@ -10,6 +9,7 @@ methodeSymbol = '$'
 let messageTab, audioTab
 
 var fs = require('fs');
+
 fs.readFile('msg.txt', 'utf8', function (err, data) {
     if (err) throw err;
     messageTab = data.split("\n");
@@ -38,6 +38,7 @@ function sound(message, path) {
     isReady = true;
 }
 
+
 function readMessage(message, msg, isSound) {
     if(isSound){
         tab = audioTab
@@ -45,33 +46,39 @@ function readMessage(message, msg, isSound) {
     else{
         tab = messageTab
     }
+    console.log(tab)
     for (const element of tab) {
         index = element.substring(0, element.indexOf(indexSymbol))
         nb = element.charAt(element.indexOf(methodeSymbol) + methodeSymbol.length)
+        index = index.toLowerCase();
 
         if (nb === "1") {
             if (msg.startsWith(index)) {
+                console.log("$1")
                 response(isSound,message,element)
-            }
-            return;
-        } else if (nb === "2") {
-            if (msg.indexOf(index) >= 0) {
-                response(isSound,message,element)
-            }
-            return;
-        } else if (nb === "3") {
-            if (msg.endsWith(index)) {
-                response(isSound,message,element)
+                return;
             }
 
-            return;
+        } else if (nb === "2") {
+            if (msg.indexOf(index) >= 0) {
+                console.log("$2")
+                response(isSound,message,element)
+                return;
+
+            }
+        } else if (nb === "3") {
+            if (msg.endsWith(index)) {
+                console.log("$3")
+                response(isSound,message,element)
+                return;
+            }
+
         } else {
             if (!element === '') {
                 console.log("Fichier mal rempli");
+                return;
             }
-            return;
         }
-
     }
 }
 
@@ -84,28 +91,27 @@ function response(isSound,message,element) {
     }
 }
 
-function httpGet(theUrl) {
-    var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
-    var xmlHttp = new XMLHttpRequest();
-    xmlHttp.open("GET", theUrl, false); // false for synchronous request
-    xmlHttp.send(null);
-    return xmlHttp.responseText;
-}
 
 bot.on("ready", () => {
-    console.log("I am ready!");
-    console.log(messageTab);
-    console.log(audioTab);
+    console.log("Ready")
     bot.user.setActivity('!commande', {type: 'WATCHING'})
 });
 
 bot.on("message", (message) => {
+
         if (message.author.bot) {
             return;
         }
         msg = message.content.toLowerCase();
+
         readMessage(message,msg,false)
         readMessage(message,msg,true)
+
+        if(lastUserMessage[message.author.id] != null && Date.now() - lastUserMessage[message.author.id] <2000)
+        {
+            message.channel.send("LA FERME! Vous voyez bien qu’il y en a encore qui composent ?");
+        }
+        lastUserMessage[message.author.id] = Date.now();
     }
 );
 
