@@ -1,6 +1,6 @@
 const UserDAO = require("../model/UserDAO.js");
 const XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
-
+const GameView = require("../view/GameView.js");
 
 class Game {
     constructor(question, answer, rightAnswer) {
@@ -13,27 +13,6 @@ class Game {
 
     }
 
-    toString = function () {
-        return {
-            embed: {
-                color: 3447003,
-                title: this.question,
-                fields: [
-                    {
-                        name: "Reponses : ",
-                        value: ":one: " + this.answer[0] + "\n" +
-                            ":two: " + this.answer[1] + "\n" +
-                            ":three: " + this.answer[2] + "\n" +
-                            ":four: " + this.answer[3]
-                    }
-                ],
-                timestamp: new Date(),
-                footer: {
-                    text: "© par Lucas Gazeau"
-                }
-            }
-        }
-    }
 
     setPlayerAnswer = function (player, answerNumber,db) {
         if(!this.playerAnswer.has(player)){
@@ -90,8 +69,7 @@ class Game {
 
                 bot.currentGame = new Game(res.results[0].question, res.results[0].autres_choix, res.results[0].reponse_correcte);
                 //message.channel.send("@everyone");
-                message.channel.send(bot.currentGame.toString())
-                    .then(msg => {
+                GameView.sendQuestion(message,bot,(msg) => {
                         msg.react('\u0031\u20E3');
                         msg.react('\u0032\u20E3');
                         msg.react('\u0033\u20E3');
@@ -107,8 +85,8 @@ class Game {
         }
     }
 
-    checkAnswer = function(message,bot,reaction,emoji){
-        if (bot.currentGame === undefined || message !== bot.currentGame.getMessage() || emoji.reaction.me) {
+    checkPlayerAnswer = function(message,bot,reaction,emoji){
+        if (emoji.reaction.me) {
             return;
         }
         for (let cacheElement of reaction.users.cache) {
@@ -135,7 +113,7 @@ class Game {
                 bot.currentGame.setPlayerAnswer(cacheElement[0], nb, bot.db);
                 if (bot.currentGame.isEnd) {
                     bot.users.fetch(bot.currentGame.getPlayerWinner()).then(user => {
-                        bot.currentGame.getMessage().channel.send("Congratulation " + user.username + " The answer was : " + bot.currentGame.getAnswer() + ".");
+                        GameView.congratMessage(bot.currentGame.getMessage(),bot,user);
                         bot.currentGame = undefined;
                     })
                     return;

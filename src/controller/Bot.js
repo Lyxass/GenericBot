@@ -13,6 +13,16 @@ class Bot {
     }
 
     static init = function (bot) {
+
+        bot.indexSymbol = '#';
+        bot.methodeSymbol = '$';
+        bot.messageTab = [];
+        bot.audioTab = [];
+        bot.textMSG = "";
+        bot.audioMSG = "";
+        bot.currentVoiceChannel = undefined;
+        bot.currentGame = undefined;
+
         FileManager.readFiles(bot);
         BDDConnexion.initConnexion(bot);
     }
