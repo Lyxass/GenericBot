@@ -4,12 +4,12 @@ const BotView = require("../view/BotView.js");
 
 
 class Bot {
-    static joinAudio = function (message, bot) {
+    static joinAudio = function (message, bot,callback) {
         bot.currentVoiceChannel = message.member.voice.channel;
         if (!bot.currentVoiceChannel) {
             return BotView.notInChannelError(message);
         }
-        bot.currentVoiceChannel.join().catch(err => console.log(err));
+        bot.currentVoiceChannel.join().then(callback()).catch(err => console.log(err));
     }
 
     static init = function (bot) {
