@@ -1,4 +1,4 @@
-const UserDAO = require("./model/UserDAO.js");
+const UserDAO = require("../model/UserDAO.js");
 const XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 
 
@@ -107,7 +107,7 @@ class Game {
         }
     }
 
-    checkAnswer = function(message,bot,reaction){
+    checkAnswer = function(message,bot,reaction,emoji){
         if (bot.currentGame === undefined || message !== bot.currentGame.getMessage() || emoji.reaction.me) {
             return;
         }
@@ -132,7 +132,7 @@ class Game {
                         console.log("ERROR");
                         return;
                 }
-                bot.currentGame.setPlayerAnswer(cacheElement[0], nb, db);
+                bot.currentGame.setPlayerAnswer(cacheElement[0], nb, bot.db);
                 if (bot.currentGame.isEnd) {
                     bot.users.fetch(bot.currentGame.getPlayerWinner()).then(user => {
                         bot.currentGame.getMessage().channel.send("Congratulation " + user.username + " The answer was : " + bot.currentGame.getAnswer() + ".");
