@@ -1,0 +1,9 @@
+{
+  "name": "bot",
+  "version": "1.0.0",
+  "dependencies": {
+    "discord.js": "^12.5.1",
+    "sqlite3": "^5.0.0",
+    "xmlhttprequest": "^1.8.0"
+  }
+}
