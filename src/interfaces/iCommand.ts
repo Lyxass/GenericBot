@@ -1,15 +1,16 @@
-interface iAudioCommand{
-    command:string,
-    path: string,
+export interface iCommand {
+    command: string,
     comment: string,
     triggerInt: number,
     useSpecialChar: boolean
+    displayInHelp: boolean
 }
 
-interface iTextCommand{
-    command:string,
+export interface iAudioCommand extends iCommand {
+    path: string,
+
+}
+
+export interface iTextCommand extends iCommand {
     message: string,
-    comment: string,
-    triggerInt: number,
-    useSpecialChar: boolean
 }

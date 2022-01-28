@@ -1,5 +1,12 @@
 
 [
-    ["Bonjour","Yo",2,false]
+    {
+        "command":"hello",
+        "message": "hello world !",
+        "comment": "Say hello world",
+        "triggerInt": 2,
+        "useSpecialChar": true,
+        "displayInHelp": true
+    }
 ]
 

@@ -6,3 +6,9 @@ src/.env
 *.mp3
 
 .env
+
+osef.txt
+
+personal.audio.json
+
+personal.text.json

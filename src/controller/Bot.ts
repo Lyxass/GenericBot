@@ -1,9 +1,9 @@
 
 const BotView = require("../view/BotView.ts");
 let audioCommand = require("../../audio.json");
-let textCommand = require("../../audio.json");
+let textCommand = require("../../text.json");
 const path = require('path')
-
+import { iCommand, iAudioCommand, iTextCommand } from "src/interfaces/iCommand";
 import { Client, Message, VoiceChannel } from "discord.js";
 const stringToCommand = require("./commands/Commands.ts").stringToCommand;
 
@@ -22,16 +22,16 @@ export class Bot {
     private currentVoiceChannel: VoiceChannel | null | undefined;
     private currentGame: undefined;
 
-    private audioCommand: [string,string,number,Boolean][]
-    private textCommand: [string,string,number,Boolean][]
-    private audioURL : string
+    private audioCommand: iAudioCommand[]
+    private textCommand: iTextCommand[]
+    private audioURL: string
 
     private constructor(public client: Client) {
 
         this.currentVoiceChannel = null;
         this.currentGame = undefined;
 
-        this.audioCommand  = audioCommand;
+        this.audioCommand = audioCommand;
         this.textCommand = textCommand;
 
         this.audioURL = process.env.AUDIO_PATH || path.resolve(__dirname, "../../audio");
@@ -78,12 +78,8 @@ export class Bot {
         }
         let msg: string = message.content.toLowerCase();
         console.log(stringToCommand);
-        
-        for (let commandString in stringToCommand) {
-            console.log(commandString)
-            console.log(process.env.CHARACTER_FOR_COMMAND + commandString)
-            console.log(msg.startsWith(process.env.CHARACTER_FOR_COMMAND + commandString))
 
+        for (let commandString in stringToCommand) {
             if (msg.startsWith(process.env.CHARACTER_FOR_COMMAND + commandString)) {
                 stringToCommand[commandString](message);
                 return;
@@ -91,55 +87,55 @@ export class Bot {
         }
 
         /*Treat audio or text*/
-        let allCommand : [string,string,number,Boolean][][]= [this.audioCommand, this.textCommand]
-        for (let i = 0; i < allCommand.length; i++) {
-            for (let command of allCommand[i]) {
-                let commandString : string = command[0].trim().toLowerCase()
-                let functionToCheck : number = command[2]
-                let useSpecialCharacter = command[3]
-                if(useSpecialCharacter){
-                    commandString = process.env.CHARACTER_FOR_COMMAND + commandString
-                }
-                let isMusic : Boolean = i == 0
-                if (functionToCheck === 0) {
-                    if (msg.startsWith(commandString)) {
-                        this.response(command[1], message, isMusic)
-                        return;
-                    }
-                } else if (functionToCheck === 1) {
-                    if (msg.indexOf(commandString) >= 0) {
-                        this.response(command[1], message, isMusic)
-                        return;
+        this.processMusicAndText(msg, this.audioCommand, true, message)
+        this.processMusicAndText(msg, this.textCommand, false, message)
+        
 
-                    }
-                } else if (functionToCheck === 2) {
-                    if (msg.endsWith(commandString)) {
-                        this.response(command[1], message, isMusic)
-                        return;
-                    }
+    }
+
+    private processMusicAndText(msgStr: string, commands: iCommand[], isMusic: boolean, message: Message) {
+        for (let command of commands) {
+            let commandString: string = command.command.trim().toLowerCase()
+            if (command.useSpecialChar) {
+                commandString = process.env.CHARACTER_FOR_COMMAND + commandString
+            }
+            if (command.triggerInt === 0) {
+                if (msgStr.startsWith(commandString)) {
+                    this.response(command,message,isMusic);
+                }
+            } else if (command.triggerInt === 1) {
+                if (msgStr.indexOf(commandString) >= 0) {
+                    this.response(command,message,isMusic);
+                }
+            } else if (command.triggerInt === 2) {
+                if (msgStr.endsWith(commandString)) {
+                    this.response(command,message,isMusic);
                 }
             }
-        } 
+        }
+        return false
     }
 
 
-    public playMusic(music : string, message : Message){
-        this.joinAudio(message).then((connection)=>{
-            console.log(this.audioURL +"/"+ music)
-            const dispatcher = connection.play(this.audioURL +"/"+ music, { volume: 0.5 });
-            dispatcher.on("speaking",()=>{});
-        }).catch((err)=>{
-            console.error("Can't join audio channel",err);
+    public playMusic(music: string, message: Message) {
+        this.joinAudio(message).then((connection) => {
+            console.log(this.audioURL + "/" + music)
+            const dispatcher = connection.play(this.audioURL + "/" + music, { volume: 0.5 });
+            dispatcher.on("speaking", () => { });
+        }).catch((err) => {
+            console.error("Can't join audio channel", err);
         })
     }
 
-    public response(pathOrMessage : string,message : Message, isMusic : Boolean){
-        if(isMusic){
-            this.playMusic(pathOrMessage, message)
-        }else{
-            message.channel.send(pathOrMessage);
-
+    public response(command: iCommand, message: Message, isMusic: Boolean) {
+        console.log(command, isMusic)
+        if (isMusic) {
+            this.playMusic((command as iAudioCommand).path, message)
+            return true;
         }
-
+        else {
+            message.channel.send((command as iTextCommand).message);
+            return true;
+        }
     }
 }
