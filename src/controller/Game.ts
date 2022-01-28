@@ -1,8 +1,11 @@
 const UserDAO = require("../model/UserDAO.js");
-const XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
+const XMLHttpRequest  = require( "xmlhttprequest"); // maybe an error here
 const GameView = require("../view/GameView.js");
+import { Message } from "discord.js";
 
-class Game {
+const Bot = require("./Bot.ts")
+
+export class Game {
     constructor(question, answer, rightAnswer) {
         this.question = question;
         this.answer = answer;
@@ -56,7 +59,8 @@ class Game {
         array.sort(() => Math.random() - 0.5);
     }
 
-    static CreateGame = function(message,bot){
+    static CreateGame = function(message : Message){
+        client = Bot.get
         var request = new XMLHttpRequest()
         request.open('GET', 'https://www.openquizzdb.org/api.php?key=DD4C57PARY&choice=4&categ=sciences');
         request.responseType = "json";
@@ -125,4 +129,3 @@ class Game {
 
 }
 
-module.exports = Game;

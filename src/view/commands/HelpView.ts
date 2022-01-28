@@ -1,5 +1,9 @@
-class HelpView{
-    static sendHelp(message,bot){
+import { Message } from "discord.js";
+import { Bot } from "../../controller/Bot";
+
+export class HelpView{
+    static sendHelp(message : Message){
+        let bot = Bot.getInstance()
         message.channel.send({
             embed: {
                 color: 3447003,
@@ -10,11 +14,11 @@ class HelpView{
                 title: "Commandes memebot",
                 fields: [{
                     name: "Texte",
-                    value: "" + bot.textMSG
+                    value: "TODO"// + bot.textMSG
                 },
                     {
                         name: "Audio",
-                        value: "" + bot.audioMSG
+                        value: "TODO" //+ bot.audioMSG
                     },
                     {
                         name: "Autres",
