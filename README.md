@@ -1,5 +1,5 @@
 # Generic Bot for discord
-A basic bot to play customs song (or memes)
+A basic bot to play customs songs (or memes)
 The purpose of this Bot is to be modular. You will find some commands already implemented but this bot can be improved easily by adding some commands. 
 
 ## List of features
@@ -98,9 +98,9 @@ Here is a list of the option you have in the env file :
 - BOT_NAME= The bot name. You can name it as you want.
 - BOT_OWNER: The name of the bot owner. It will be displayed in the help command (and other commands in the future)
 - ICON_PATH: The path of the icon you want to display. It's used in the help command.
-- CHARACTER_FOR_COMMAND : By default, it's the '!' but you can change it if you already have a bot using this character.
+- CHARACTER_FOR_COMMAND: By default, it's the '!' but you can change it if you already have a bot using this character.
 - AUDIO_PATH: The path of your audio folder. By default, it is located at the same level as the src folder. **The path must be absolute**
-- VOLUME : The volume of the audio player. The default value is 1. You can use float and integer (example of valid values : 0.2, 0.5, 1, 2)
+- VOLUME: The volume of the audio player. The default value is 1. You can use float and integer (example of valid values: 0.2, 0.5, 1, 2)
 
 ## Future Updates
 Here is a list of new features that may be implemented in the future :
