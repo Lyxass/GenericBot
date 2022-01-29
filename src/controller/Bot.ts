@@ -1,7 +1,7 @@
 
 const BotView = require("../view/BotView.ts");
-let audioCommand = require("../../audio.json");
-let textCommand = require("../../text.json");
+let _audioCommands = require("../../audio.json");
+let _textCommands = require("../../text.json");
 const path = require('path')
 import { iCommand, iAudioCommand, iTextCommand } from "src/interfaces/iCommand";
 import { Client, Message, VoiceChannel } from "discord.js";
@@ -19,22 +19,28 @@ export class Bot {
         return Bot.instance
     }
 
-    private currentVoiceChannel: VoiceChannel | null | undefined;
-    private currentGame: undefined;
+    private _currentVoiceChannel: VoiceChannel | null | undefined;
+    private _currentGame: undefined;
 
-    private audioCommand: iAudioCommand[]
-    private textCommand: iTextCommand[]
-    private audioURL: string
+    private _audioCommands: iAudioCommand[]
+    private _textCommands: iTextCommand[]
+    private _audioURL: string
+
+    private _playerVolume : number = 1
 
     private constructor(public client: Client) {
 
-        this.currentVoiceChannel = null;
-        this.currentGame = undefined;
+        this._currentVoiceChannel = null;
+        this._currentGame = undefined;
 
-        this.audioCommand = audioCommand;
-        this.textCommand = textCommand;
+        this._audioCommands = _audioCommands;
+        this._textCommands = _textCommands;
 
-        this.audioURL = process.env.AUDIO_PATH || path.resolve(__dirname, "../../audio");
+        this._audioURL = process.env.AUDIO_PATH || path.resolve(__dirname, "../../audio");
+
+        if(process.env.VOLUME !== undefined){
+            this._playerVolume = parseFloat(process.env.VOLUME)
+        }
 
         this.client.on("ready", () => {
             //Bot.init(bot);
@@ -56,21 +62,19 @@ export class Bot {
     }
 
     public async joinAudio(message: Message) {
-        this.currentVoiceChannel = message?.member?.voice?.channel;
-        if (!this.currentVoiceChannel) {
+        this._currentVoiceChannel = message?.member?.voice?.channel;
+        if (!this._currentVoiceChannel) {
             return BotView.notInChannelError(message);
         }
-        return this.currentVoiceChannel.join();
+        return this._currentVoiceChannel.join();
     }
 
     public leaveAudio() {
-        if (!(this.currentVoiceChannel === undefined || this.currentVoiceChannel === null)) {
-            this.currentVoiceChannel.leave();
-            this.currentVoiceChannel = undefined;
+        if (!(this._currentVoiceChannel === undefined || this._currentVoiceChannel === null)) {
+            this._currentVoiceChannel.leave();
+            this._currentVoiceChannel = undefined;
         }
     }
-
-
 
     private processMessage(message: Message) {
         if (message.author.bot) {
@@ -87,10 +91,8 @@ export class Bot {
         }
 
         /*Treat audio or text*/
-        this.processMusicAndText(msg, this.audioCommand, true, message)
-        this.processMusicAndText(msg, this.textCommand, false, message)
-        
-
+        this.processMusicAndText(msg, this._audioCommands, true, message)
+        this.processMusicAndText(msg, this._textCommands, false, message)
     }
 
     private processMusicAndText(msgStr: string, commands: iCommand[], isMusic: boolean, message: Message) {
@@ -119,8 +121,8 @@ export class Bot {
 
     public playMusic(music: string, message: Message) {
         this.joinAudio(message).then((connection) => {
-            console.log(this.audioURL + "/" + music)
-            const dispatcher = connection.play(this.audioURL + "/" + music, { volume: 0.5 });
+            console.log(this._audioURL + "/" + music)
+            const dispatcher = connection.play(this._audioURL + "/" + music, { volume: this._playerVolume });
             dispatcher.on("speaking", () => { });
         }).catch((err) => {
             console.error("Can't join audio channel", err);
@@ -138,4 +140,13 @@ export class Bot {
             return true;
         }
     }
+
+    public get audioCommands() : iAudioCommand[]{
+        return this._audioCommands
+    }
+
+    public get textCommands() : iTextCommand[]{
+        return this._textCommands
+    }
+
 }

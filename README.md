@@ -1,8 +1,8 @@
 # Generic Bot for discord
-
+A basic bot to play custom song (or memes)
 The purpose of this Bot is to be modular. You will find some commands already implemented but this bot can be improved easily by adding some commands. 
 
-## List of feature
+## List of features
 Currently, there are multiple features :
 - You can configure the bot to play a sound when a specific command is executed
 - You can configure the bot to respond a specific message when a specific command is executed
@@ -32,7 +32,7 @@ Example of audio.json :
 [
     {
         "command":"oofT",
-        "path": "oofS.mp3",
+        "path": "oofT.mp3",
         "comment": "oof from Roblox (trigger version)",
         "triggerInt": 2,
         "useSpecialChar": true,
@@ -45,7 +45,7 @@ Example of audio.json :
         "triggerInt": 2,
         "useSpecialChar": true,
         "displayInHelp": true
-    },
+    }
 ]
 ```
 
@@ -83,8 +83,7 @@ Example of audio.json :
         "triggerInt": 2,
         "useSpecialChar": true,
         "displayInHelp": true
-    },
-
+    }
 ]
 ```
 
@@ -96,10 +95,11 @@ In the repository, you will find a template of the .env file. To use it, rename 
 
 Here is a list of the option you have in the env file : 
 - TOKEN: Your discord bot token. You must create an application on the [discord developer page](https://discord.com/developers/applications) and add a bot to this application. You can get your bot token in the bot section.
+- BOT_NAME= The bot name. You can name it as you want.
 - BOT_OWNER: The name of the bot owner. It will be displayed in the help command (and other commands in the future)
 - ICON_PATH: The path of the icon you want to display. It's used in the help command.
 - CHARACTER_FOR_COMMAND : By default, it's the '!' but you can change it if you already have a bot using this character.
 - AUDIO_PATH: The path of your audio folder. By default, it is located at the same level as the src folder. **The path must be absolute**
-
+- VOLUME : The volume of the audio player. Default value is 1. You can use float and integer (exemple of valid values : 0.2, 0.5, 1, 2)
 ## Need help?
 If you find a bug or you need help configuring this bot, you can create an issue. If you are not familiar with GitHub, you can contact me on my email: lucasgazeau@lgazeau.fr Don't hesitate if you have any questions.

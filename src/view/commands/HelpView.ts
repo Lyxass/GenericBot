@@ -1,33 +1,43 @@
 import { Message } from "discord.js";
+import { iAudioCommand, iTextCommand } from "src/interfaces/iCommand";
 import { Bot } from "../../controller/Bot";
 
-export class HelpView{
-    static sendHelp(message : Message){
-        let bot = Bot.getInstance()
+export class HelpView {
+    static sendHelp(message: Message, audioCommands: iAudioCommand[], textCommands: iTextCommand[]) {
+        let audioHelp: string = ""
+        for (const command of audioCommands) {
+            audioHelp += command.command + " : " + command.comment + "\n"
+        }
+        let textHelp: string = ""
+        for (const command of textCommands) {
+            textHelp += command.command + " : " + command.comment + "\n"
+        }
         message.channel.send({
             embed: {
                 color: 3447003,
                 author: {
-                    name: "Lucas",
-                    icon_url: "https://media.discordapp.net/attachments/675318777113608199/780429706755178516/cozeau.png"
+                    name: process.env.BOT_NAME,
+                    icon_url: process.env.ICON_PATH
                 },
-                title: "Commandes memebot",
-                fields: [{
-                    name: "Texte",
-                    value: "TODO"// + bot.textMSG
-                },
+                title: "All commands",
+                fields: [
                     {
-                        name: "Audio",
-                        value: "TODO" //+ bot.audioMSG
+                        name: "Management",
+                        value: "!help : Display all commands \n !join : Makes the bot join your audio channel \n !stop : Makes the bot leave your audio channel"
                     },
                     {
-                        name: "Autres",
-                        value: "!help : Affiche l'aide \n !join : Fait rejoindre le bot dans ton channel audio \n !stop : Déconnecte le bot de son channel audio  \n !kick nomJoueur : Kick le joueur du channel vocal si bous avez gagné un jeu."
-                    }
+                        name: "Text",
+                        value: textHelp
+                    },
+                    {
+                        name: "Audio",
+                        value: audioHelp
+                    },
+
                 ],
                 timestamp: new Date(),
                 footer: {
-                    text: "© par Lucas Gazeau"
+                    text: "Bot Owner : " + process.env.BOT_OWNER
                 }
             }
         }).then();

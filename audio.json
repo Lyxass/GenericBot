@@ -1,8 +1,16 @@
 [
     {
-        "command":"oof",
-        "path": "oofS.mp3",
+        "command":"oofT",
+        "path": "oofT.mp3",
         "comment": "oof from Roblox (trigger version)",
+        "triggerInt": 2,
+        "useSpecialChar": true,
+        "displayInHelp": true
+    },
+    {
+        "command":"oof",
+        "path": "oof.mp3",
+        "comment": "oof from Roblox (normal version)",
         "triggerInt": 2,
         "useSpecialChar": true,
         "displayInHelp": true
