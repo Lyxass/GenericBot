@@ -101,5 +101,14 @@ Here is a list of the option you have in the env file :
 - CHARACTER_FOR_COMMAND : By default, it's the '!' but you can change it if you already have a bot using this character.
 - AUDIO_PATH: The path of your audio folder. By default, it is located at the same level as the src folder. **The path must be absolute**
 - VOLUME : The volume of the audio player. Default value is 1. You can use float and integer (exemple of valid values : 0.2, 0.5, 1, 2)
+
+## Future Updates
+Here is a list of new features that may be implemented in the future :
+- A system of logs
+- Manage multiple audio channels
+
+
+If you have any suggestion or request, you can contact me at [my email](lucasgazeau@lgazeau.fr). 
 ## Need help?
 If you find a bug or you need help configuring this bot, you can create an issue. If you are not familiar with GitHub, you can contact me on my email: lucasgazeau@lgazeau.fr Don't hesitate if you have any questions.
+
