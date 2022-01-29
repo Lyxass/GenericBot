@@ -1,19 +1,19 @@
 
-const BotView = require("../view/BotView.ts");
-let _audioCommands = require("../../audio.json");
-let _textCommands = require("../../text.json");
-const path = require('path')
+import { BotView } from "../view/BotView";
+import audioCommands = require("../../audio.json");
+import textCommands = require("../../text.json");
+import path = require('path')
 import { iCommand, iAudioCommand, iTextCommand } from "src/interfaces/iCommand";
 import { Client, Message, VoiceChannel } from "discord.js";
-const stringToCommand = require("./commands/Commands.ts").stringToCommand;
-
+import stringCommand = require("./commands/Commands");
+const stringToCommand = stringCommand.stringToCommand
 export class Bot {
 
     static instance: Bot | undefined = undefined
 
     static getInstance(): Bot {
         if (Bot.instance === undefined) {
-            let client: Client = new Client();
+            const client: Client = new Client();
             Bot.instance = new Bot(client)
         }
         return Bot.instance
@@ -26,19 +26,19 @@ export class Bot {
     private _textCommands: iTextCommand[]
     private _audioURL: string
 
-    private _playerVolume : number = 1
+    private _playerVolume = 1
 
     private constructor(public client: Client) {
 
         this._currentVoiceChannel = null;
         this._currentGame = undefined;
 
-        this._audioCommands = _audioCommands;
-        this._textCommands = _textCommands;
+        this._audioCommands = audioCommands;
+        this._textCommands = textCommands;
 
         this._audioURL = process.env.AUDIO_PATH || path.resolve(__dirname, "../../audio");
 
-        if(process.env.VOLUME !== undefined){
+        if (process.env.VOLUME !== undefined) {
             this._playerVolume = parseFloat(process.env.VOLUME)
         }
 
@@ -80,10 +80,10 @@ export class Bot {
         if (message.author.bot) {
             return;
         }
-        let msg: string = message.content.toLowerCase();
+        const msg: string = message.content.toLowerCase();
         console.log(stringToCommand);
 
-        for (let commandString in stringToCommand) {
+        for (const commandString in stringToCommand) {
             if (msg.startsWith(process.env.CHARACTER_FOR_COMMAND + commandString)) {
                 stringToCommand[commandString](message);
                 return;
@@ -96,22 +96,22 @@ export class Bot {
     }
 
     private processMusicAndText(msgStr: string, commands: iCommand[], isMusic: boolean, message: Message) {
-        for (let command of commands) {
+        for (const command of commands) {
             let commandString: string = command.command.trim().toLowerCase()
             if (command.useSpecialChar) {
                 commandString = process.env.CHARACTER_FOR_COMMAND + commandString
             }
             if (command.triggerInt === 0) {
                 if (msgStr.startsWith(commandString)) {
-                    this.response(command,message,isMusic);
+                    this.response(command, message, isMusic);
                 }
             } else if (command.triggerInt === 1) {
                 if (msgStr.indexOf(commandString) >= 0) {
-                    this.response(command,message,isMusic);
+                    this.response(command, message, isMusic);
                 }
             } else if (command.triggerInt === 2) {
                 if (msgStr.endsWith(commandString)) {
-                    this.response(command,message,isMusic);
+                    this.response(command, message, isMusic);
                 }
             }
         }
@@ -121,15 +121,17 @@ export class Bot {
 
     public playMusic(music: string, message: Message) {
         this.joinAudio(message).then((connection) => {
-            console.log(this._audioURL + "/" + music)
-            const dispatcher = connection.play(this._audioURL + "/" + music, { volume: this._playerVolume });
-            dispatcher.on("speaking", () => { });
+            if(connection !== (null || undefined)){
+                const dispatcher = connection.play(this._audioURL + "/" + music, { volume: this._playerVolume });
+                // eslint-disable-next-line @typescript-eslint/no-empty-function
+                dispatcher.on("speaking", ()=>{});
+            }
         }).catch((err) => {
             console.error("Can't join audio channel", err);
         })
     }
 
-    public response(command: iCommand, message: Message, isMusic: Boolean) {
+    public response(command: iCommand, message: Message, isMusic: boolean) {
         console.log(command, isMusic)
         if (isMusic) {
             this.playMusic((command as iAudioCommand).path, message)
@@ -141,11 +143,11 @@ export class Bot {
         }
     }
 
-    public get audioCommands() : iAudioCommand[]{
+    public get audioCommands(): iAudioCommand[] {
         return this._audioCommands
     }
 
-    public get textCommands() : iTextCommand[]{
+    public get textCommands(): iTextCommand[] {
         return this._textCommands
     }
 

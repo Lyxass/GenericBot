@@ -1,16 +1,17 @@
 import { Message } from "discord.js";
 import { iAudioCommand, iTextCommand } from "src/interfaces/iCommand";
-import { Bot } from "../../controller/Bot";
 
 export class HelpView {
     static sendHelp(message: Message, audioCommands: iAudioCommand[], textCommands: iTextCommand[]) {
-        let audioHelp: string = ""
+        let audioHelp = ""
         for (const command of audioCommands) {
-            audioHelp += command.command + " : " + command.comment + "\n"
+            const character =  command.useSpecialChar ? process.env.CHARACTER_FOR_COMMAND : ""
+            audioHelp += character + command.command + " : " + command.comment + "\n"
         }
-        let textHelp: string = ""
+        let textHelp = ""
         for (const command of textCommands) {
-            textHelp += command.command + " : " + command.comment + "\n"
+            const character =  command.useSpecialChar ? process.env.CHARACTER_FOR_COMMAND : ""
+            textHelp += character + command.command + " : " + command.comment + "\n"
         }
         message.channel.send({
             embed: {
@@ -23,7 +24,7 @@ export class HelpView {
                 fields: [
                     {
                         name: "Management",
-                        value: "!help : Display all commands \n !join : Makes the bot join your audio channel \n !stop : Makes the bot leave your audio channel"
+                        value: process.env.CHARACTER_FOR_COMMAND+"help : Display all commands \n "+process.env.CHARACTER_FOR_COMMAND+"join : Makes the bot join your audio channel \n "+process.env.CHARACTER_FOR_COMMAND+"stop : Makes the bot leave your audio channel"
                     },
                     {
                         name: "Text",
@@ -43,4 +44,3 @@ export class HelpView {
         }).then();
     }
 }
-module.exports = HelpView;

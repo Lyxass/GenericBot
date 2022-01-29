@@ -1,7 +1,3 @@
-// const Help = require("./Help");
-// const Stop = require("./Stop");
-// const Join = require("./Join");
-
 import { Help } from "./Help"
 import { Stop } from "./Stop"
 import { Join } from "./Join"

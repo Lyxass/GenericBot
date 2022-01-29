@@ -1,10 +1,10 @@
 import { Message } from "discord.js";
 import { Bot } from "../Bot";
-const HelpView = require("../../view/commands/HelpView.ts");
+import { HelpView } from "../../view/commands/HelpView";
 
-export class Help {
+export class Help{
     static run(message : Message) {
-        let bot : Bot = Bot.getInstance()
+        const bot : Bot = Bot.getInstance()
         HelpView.sendHelp(message, bot.audioCommands, bot.textCommands);
     }
 }
